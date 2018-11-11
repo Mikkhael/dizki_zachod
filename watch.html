@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Trzeba dodać poniższą linijkę do klienta, aby można było się połączyć z serwerem poprzez socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <title>Tak</title>
+</head>
+<body>
+    <h1>Oglądaj</h1>
+    
+    <!-- Przycisk, który posłurzy do rozpoczęcia pojedynku -->
+    <input type="button" value="Rozpocznij Grę" id="startBtn"/>
+
+    <script>
+            // Nawiązanie połączenia
+            const socket = io();
+            
+            // Przypisanie funkcji wysyłającej komunikat "start" przez socket do zdarzenia naciśnięcia na przycisk o ID "startBtn"
+            document.getElementById("startBtn").addEventListener("click", function(){
+                socket.emit("start");
+            });
+            
+            // Funkcja zmieniająca kolor tła
+            function setColor(color){
+                document.body.style.backgroundColor = color;
+            }
+            
+            // Obsłurzenie komunikatu typu "updateState". Zmiana koloru tła zależnie od stanu gry
+            socket.on("updateState", function(state){
+                if(state == "setup"){
+                    setColor("white");
+                }else if(state == "fajny"){
+                    setColor("yellow");
+                }else if(state == "niefajny"){
+                    setColor("green");
+                }else if(state == "end"){
+                    setColor("red");
+                }
+            });
+
+            // Wysłanie komunikatu typu "iWannaWatch" przez socket na serwer. Rejestracja jako widz.
+            socket.emit("iWannaWatch");
+        </script>
+</body>
+</html>
